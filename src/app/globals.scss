@@ -57,3 +57,54 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* 
+  Mantine NavLink start
+*/
+.mantine-NavLink-root {
+  padding-block: 0.2rem !important;
+
+  &:hover {
+    background-color: transparent;
+
+    .mantine-NavLink-section,
+    .mantine-NavLink-label {
+      color: hsl(var(--primary)); //! group-hover:text-primary
+    }
+  }
+
+  &[data-active='true'] {
+    background-color: transparent; //! override
+
+    & > * {
+      color: hsl(var(--primary));
+    }
+  }
+
+  &[data-expanded='true'] > .mantine-NavLink-section > .chevron {
+    transform: rotate(90deg);
+  }
+
+  & > * {
+    color: hsl(var(--muted-foreground));
+  }
+
+  .mantine-NavLink-section {
+    margin-right: 0.3rem;
+  }
+}
+
+.mantine-NavLink-children {
+  .mantine-NavLink-root {
+    &:hover {
+      color: hsl(var(--primary));
+      background-color: transparent;
+    }
+
+    padding-block: 0.2rem !important;
+  }
+}
+
+/* 
+  Mantine NavLink end.
+*/
