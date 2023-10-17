@@ -26,13 +26,13 @@ export default function Li({ icon: Icon, label, active, onClick }: LiProps) {
               onClick={onClick}
               className={cn(
                 'grid h-12 w-12 cursor-pointer place-items-center rounded-2xl text-[#94a3b8] transition-colors',
-                active && 'bg-[#D1FAE5] text-[#10b981]'
+                active && 'bg-primary/10 text-primary'
               )}
             >
               <Icon size={20} />
             </button>
           </TooltipTrigger>
-          <TooltipContent side='right' className='bg-gray-950'>
+          <TooltipContent side='right' className='bg-gray-950 dark:bg-primary'>
             <p>{label}</p>
           </TooltipContent>
         </Tooltip>

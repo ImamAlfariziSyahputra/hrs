@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useSidebarStore } from '@/store/use-sidebar-store';
+import { useSidebarMainStore } from '@/store/use-sidebar-main-store';
 import { Atom, LucideUserCircle2, Settings } from 'lucide-react';
 
 import sidebarData from '@/data/sidebar-data';
@@ -16,11 +16,11 @@ import {
 import Li from './li';
 
 export default function SidebarMain() {
-  const selectedMain = useSidebarStore((state) => state.selectedMain);
-  const setSelectedMain = useSidebarStore((state) => state.setSelectedMain);
+  const selectedMain = useSidebarMainStore((state) => state.selectedMain);
+  const setSelectedMain = useSidebarMainStore((state) => state.setSelectedMain);
 
   return (
-    <nav className='flex h-screen w-[80px] shrink-0 flex-col items-center space-y-4 border-r bg-white py-4 text-black'>
+    <nav className='flex h-screen w-[80px] shrink-0 flex-col items-center space-y-4 border-r bg-background py-4 text-black'>
       {/* LOGO */}
       <Link href='/'>
         <Atom size={40} className='text-[#10B981]' />
@@ -45,7 +45,7 @@ export default function SidebarMain() {
           <li>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Avatar className='cursor-pointer transition-all hover:ring-1 hover:ring-primary hover:ring-offset-4'>
+                <Avatar className='cursor-pointer transition-all duration-300 hover:ring-1 hover:ring-primary hover:ring-offset-4 hover:ring-offset-background'>
                   <AvatarImage
                     src='https://github.com/shadcn.png'
                     alt='@shadcn'
@@ -53,8 +53,13 @@ export default function SidebarMain() {
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
-              <DropdownMenuContent side='right' align='end' className='p-0'>
-                <div className='flex items-center gap-3 bg-muted p-6'>
+              <DropdownMenuContent
+                side='right'
+                align='end'
+                sideOffset={15}
+                className='p-0'
+              >
+                <div className='flex items-center gap-3 bg-[#F8FAFC] p-6 dark:bg-[#263345]'>
                   <Avatar className='h-14 w-14 shrink-0'>
                     <AvatarImage
                       src='https://github.com/shadcn.png'
