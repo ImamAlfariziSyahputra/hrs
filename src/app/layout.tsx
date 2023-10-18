@@ -7,6 +7,7 @@ import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 
 import { cn } from '@/lib/utils';
 import Main from '@/components/main';
+import ProgressProvider from '@/components/provider/progress-provider';
 import { ThemeProvider } from '@/components/provider/theme-provider';
 import Sidebar from '@/components/sidebar';
 
@@ -34,9 +35,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <MantineProvider>
-            <Sidebar />
-
-            <Main>{children}</Main>
+            <ProgressProvider>
+              <Sidebar />
+              <Main>{children}</Main>
+            </ProgressProvider>
           </MantineProvider>
         </ThemeProvider>
       </body>
