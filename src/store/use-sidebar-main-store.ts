@@ -1,14 +1,17 @@
 import { create } from 'zustand';
 
-import { type MenuItem } from '@/types/sidebar.type';
-import sidebarData from '@/data/sidebar-data';
+import { MenuItem } from '@/types/sidebar.type';
 
 type SidebarMainState = {
-  selectedMain: MenuItem;
-  setSelectedMain: (menuItem: MenuItem) => void;
+  show: boolean;
+  setShow: (bool: boolean) => void;
+  selectedMain: MenuItem | null;
+  setSelectedMain: (payload: MenuItem) => void;
 };
 
 export const useSidebarMainStore = create<SidebarMainState>()((set) => ({
-  selectedMain: sidebarData[0],
-  setSelectedMain: (menuItem) => set({ selectedMain: menuItem }),
+  show: true,
+  setShow: (bool) => set({ show: bool }),
+  selectedMain: null,
+  setSelectedMain: (payload) => set({ selectedMain: payload }),
 }));

@@ -2,10 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+.parent-active {
+  background-color: red !important;
+}
+
 @layer base {
   :root {
     --body: 210, 40%, 96%;
-    --background: 0 0% 100%;
+    --background: 255, 255, 255;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
@@ -28,8 +32,8 @@
   }
 
   .dark {
-    --body: 222.2, 47%, 11%;
-    --background: 217.2, 33%, 18%;
+    --body: 222, 47%, 11%;
+    --background: 30, 41, 59;
     --foreground: 0 0% 95%;
     --card: 24 9.8% 10%;
     --card-foreground: 0 0% 95%;

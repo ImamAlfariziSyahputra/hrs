@@ -1,103 +1,77 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSidebarMainStore } from '@/store/use-sidebar-main-store';
-import { Atom, LucideUserCircle2, Settings } from 'lucide-react';
+import { useSidebarSecondaryStore } from '@/store/use-sidebar-secondary-store';
+import { Atom } from 'lucide-react';
 
+import { MenuLink } from '@/types/sidebar.type';
 import sidebarData from '@/data/sidebar-data';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { useWindowSize } from '@/lib/react-hookz';
+import { cn } from '@/lib/utils';
 import Li from './li';
+import ProfileDropdown from './profile-dropdown';
 
 export default function SidebarMain() {
+  const window = useWindowSize();
+  const showMain = useSidebarMainStore((state) => state.show);
+  const setShowMain = useSidebarMainStore((state) => state.setShow);
   const selectedMain = useSidebarMainStore((state) => state.selectedMain);
   const setSelectedMain = useSidebarMainStore((state) => state.setSelectedMain);
+  const setShowSecondary = useSidebarSecondaryStore((state) => state.setShow);
+
+  const [activeMainLink, setActiveMainLink] = useState<MenuLink | null>(null);
+
+  useEffect(() => {
+    if (selectedMain) {
+      setActiveMainLink(selectedMain.value);
+    }
+  }, [selectedMain]);
+
+  //! close "main" when less than 1280px,
+  //! else: open it
+  useEffect(() => {
+    if (window.width < 1280 && !showMain) {
+      setShowMain(false);
+    } else {
+      setShowMain(true);
+    }
+  }, [window.width]);
 
   return (
-    <nav className='flex h-screen w-[80px] shrink-0 flex-col items-center space-y-4 border-r bg-background py-4 text-black'>
+    <nav
+      className={cn(
+        'z-10 flex h-screen w-[80px] shrink-0 translate-x-[-80px] flex-col items-center space-y-4 border-r bg-background py-4 text-black transition-transform duration-500',
+        showMain && 'translate-x-0'
+      )}
+    >
       {/* LOGO */}
       <Link href='/'>
         <Atom size={40} className='text-[#10B981]' />
       </Link>
 
+      {/* MENUS (TOP) */}
       <div className='flex h-full flex-col justify-between'>
-        {/* MENUS */}
         <ul className='space-y-4'>
           {sidebarData.map((sidebar) => (
             <Li
               key={sidebar.label}
               icon={sidebar.icon}
               label={sidebar.label}
-              active={selectedMain.label === sidebar.label}
-              onClick={() => setSelectedMain(sidebar)}
+              active={sidebar.value === activeMainLink}
+              onClick={() => {
+                setSelectedMain(sidebar);
+                setShowSecondary(true);
+              }}
             />
           ))}
         </ul>
 
-        {/* MENUS BOTTOM */}
+        {/* MENUS (BOTTOM) */}
         <ul className='grid grid-cols-1 place-items-center space-y-4'>
           <li>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Avatar className='cursor-pointer transition-all duration-300 hover:ring-1 hover:ring-primary hover:ring-offset-4 hover:ring-offset-background'>
-                  <AvatarImage
-                    src='https://github.com/shadcn.png'
-                    alt='@shadcn'
-                  />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                side='right'
-                align='end'
-                sideOffset={15}
-                className='p-0'
-              >
-                <div className='flex items-center gap-3 bg-[#F8FAFC] p-6 dark:bg-[#263345]'>
-                  <Avatar className='h-14 w-14 shrink-0'>
-                    <AvatarImage
-                      src='https://github.com/shadcn.png'
-                      alt='@shadcn'
-                    />
-                    <AvatarFallback>CN</AvatarFallback>
-                  </Avatar>
-                  <div className='shrink-0'>
-                    <p className='text-sm'>Matt Murdock</p>
-                    <p className='text-xs text-muted-foreground'>
-                      Web Developer
-                    </p>
-                  </div>
-                </div>
-                <div className='space-y-1 p-1.5'>
-                  <DropdownMenuItem className='group flex cursor-pointer items-center gap-2.5 text-xs focus:bg-muted'>
-                    <LucideUserCircle2
-                      size={16}
-                      className='text-muted-foreground group-hover:text-primary'
-                    />
-                    <div className=''>
-                      <p>Profile</p>
-                      <p className='text-muted-foreground'>View your profile</p>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className='group flex cursor-pointer items-center gap-2.5 text-xs focus:bg-muted'>
-                    <Settings
-                      size={16}
-                      className='text-muted-foreground group-hover:text-primary'
-                    />
-                    <div className=''>
-                      <p>Settings</p>
-                      <p className='text-muted-foreground'>Account settings</p>
-                    </div>
-                  </DropdownMenuItem>
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <ProfileDropdown />
           </li>
         </ul>
       </div>

@@ -6,10 +6,9 @@ import { Inter } from 'next/font/google';
 import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 
 import { cn } from '@/lib/utils';
+import Main from '@/components/main';
 import { ThemeProvider } from '@/components/provider/theme-provider';
-import SidebarMain from '@/components/sidebar/sidebar-main';
-import SidebarSecondary from '@/components/sidebar/sidebar-secondary';
-import Topbar from '@/components/topbar';
+import Sidebar from '@/components/sidebar';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -27,7 +26,7 @@ export default function RootLayout({
       <head>
         <ColorSchemeScript />
       </head>
-      <body className={cn(inter.className, 'flex bg-body text-foreground')}>
+      <body className={cn(inter.className, 'relative bg-body text-foreground')}>
         <ThemeProvider
           attribute='class'
           defaultTheme='system'
@@ -35,13 +34,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <MantineProvider>
-            <SidebarMain />
-            <SidebarSecondary />
+            <Sidebar />
 
-            <main className='w-full px-10'>
-              <Topbar />
-              {children}
-            </main>
+            <Main>{children}</Main>
           </MantineProvider>
         </ThemeProvider>
       </body>

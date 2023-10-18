@@ -1,99 +1,78 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useTopbarStore } from '@/store/use-topbar-store';
-import { NavLink } from '@mantine/core';
-import { isEqual } from 'lodash';
 import { ChevronRight } from 'lucide-react';
 
-import { type MenuItemChildren } from '@/types/sidebar.type';
+import { MenuItemChildren } from '@/types/sidebar.type';
 import { cn } from '@/lib/utils';
-
-const split = ({ value, delimiter }: { value: string; delimiter: string }) =>
-  value.split(delimiter).slice(1, value.split(delimiter).length);
 
 type MenuItemProps = {
   item: MenuItemChildren;
-  depth: number;
 };
 
-export default function MenuItem({ item, depth = 0 }: MenuItemProps) {
+export default function MenuItem({ item }: MenuItemProps) {
   const pathname = usePathname();
 
-  const [parentActive, setParentActive] = useState(false);
-  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef<HTMLButtonElement>(null);
 
-  const setTopbarTitle = useTopbarStore((state) => state.setTitle);
-
-  const pathnameSplit = split({ value: pathname, delimiter: '/' }).slice(
-    0,
-    depth + 1
-  );
-
-  const linkSplit = split({ value: item.value, delimiter: '/' }).slice(
-    0,
-    depth + 1
-  );
+  const [open, setOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    //! set parent active
-    setParentActive(isEqual(pathnameSplit, linkSplit));
+    if (dropdownRef.current)
+      setOpen(
+        !!dropdownRef.current.nextElementSibling?.querySelector('.active')
+      );
+  }, []);
 
-    //! set topbar-title based on active link
-    if (pathname === item.value) setTopbarTitle(item.label);
-  }, [pathname]);
+  //! dropdown (parent)
+  if (item.children) {
+    return (
+      <li>
+        <button
+          type='button'
+          ref={dropdownRef}
+          className='flex min-h-[2rem] cursor-pointer items-center gap-1 px-3 transition-colors hover:text-primary [&:has(+_ul_.active)>*]:text-primary'
+          onClick={() => setOpen(!open)}
+        >
+          <ChevronRight
+            size={16}
+            className={cn(
+              'chevron-right transition-transform duration-300',
+              open ? 'rotate-90' : 'rotate-0'
+            )}
+          />
+          <span>{item.label}</span>
+        </button>
 
-  //! Dropdown (parent)
-  return typeof item.children === 'object' ? (
-    <NavLink
-      key={`parent-${item.label}`}
-      component='button'
-      opened={open || parentActive}
-      leftSection={
-        <ChevronRight
+        <ul
           className={cn(
-            'chevron transition-all',
-            parentActive && 'text-primary'
-          )}
-          size={16}
-        />
-      }
-      label={
-        <span className={cn(parentActive && 'text-primary transition-colors')}>
-          {item.label}
-        </span>
-      }
-      rightSection={<span />}
-      childrenOffset={20}
-      onClick={() => setOpen(open ? !parentActive : !open)}
-    >
-      {item.children.map((i, idx) => (
-        <MenuItem key={`${depth}-${idx}`} item={i} depth={depth + 1} />
-      ))}
-    </NavLink>
-  ) : (
-    //! Link
-    <NavLink
-      href={item.value}
-      component={Link}
-      label={
-        <span
-          className={cn(
-            'flex items-center gap-1.5',
-            pathname === item.value && 'text-primary transition-colors'
+            'grid grid-rows-[0fr] pl-4 transition-[grid-template-rows] duration-300',
+            open && 'grid-rows-[1fr]'
           )}
         >
-          {item.label}
-        </span>
-      }
-      leftSection={
-        <item.icon
-          size={16}
-          className={cn(
-            pathname === item.value && 'text-primary transition-colors'
-          )}
-        />
-      }
-    />
+          <div className='overflow-hidden'>
+            {item.children.map((i, idx) => (
+              <MenuItem key={idx} item={i} />
+            ))}
+          </div>
+        </ul>
+      </li>
+    );
+  }
+
+  //! link
+  return (
+    <li key={item.value}>
+      <Link
+        href={item.value}
+        className={cn(
+          'flex min-h-[2rem] items-center gap-1 px-3 transition-colors hover:text-primary',
+          pathname === item.value && 'active text-primary'
+        )}
+      >
+        <item.icon size={16} />
+        <span>{item.label}</span>
+      </Link>
+    </li>
   );
 }

@@ -23,11 +23,11 @@ export default function Li({ icon: Icon, label, active, onClick }: LiProps) {
           <TooltipTrigger asChild>
             <button
               type='button'
-              onClick={onClick}
               className={cn(
                 'grid h-12 w-12 cursor-pointer place-items-center rounded-2xl text-[#94a3b8] transition-colors',
                 active && 'bg-primary/10 text-primary'
               )}
+              onClick={onClick}
             >
               <Icon size={20} />
             </button>
